@@ -180,6 +180,7 @@ ClientBin/
 orleans.codegen.cs
 
 /node_modules
+/.angular
 
 # RIA/Silverlight projects
 Generated_Code/
@@ -229,3 +230,15 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+
+# compiled output
+/dist
+/tmp
+/out-tsc
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
