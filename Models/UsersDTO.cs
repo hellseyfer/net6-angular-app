@@ -1,6 +1,6 @@
 ﻿namespace net6_angular_app.Models
 {
-    public class Users
+    public class UsersDTO
     {
         public string UserName
         {
@@ -22,6 +22,9 @@
             get;
             set;
         }
-        public string? Secret { get; set; } // we hide this with DTO
+
+        public UsersDTO() { }
+        public UsersDTO(Users user) =>
+            (UserName, EmailId) = (user.UserName, user.EmailId);
     }
 }

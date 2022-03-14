@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using FluentValidation.Results;
+using net6_angular_app.Validations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,8 +61,6 @@ if (!app.Environment.IsDevelopment())
 app.UseSwagger();
 app.UseSwaggerUI();
 
-
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
@@ -79,7 +79,8 @@ app.MapPost("/login", async (UserLogins userLogins, UserDbContext context, JwtSe
     .Where(u => u.UserName.Equals(userLogins.UserName) && u.Password.Equals(userLogins.Password))
     .FirstOrDefaultAsync();
 
-    if (valid.UserName != null) {
+    if (valid?.UserName != null)
+    {
         var user = await context.Users
         .Where(u => u.UserName.Equals(userLogins.UserName) && u.Password.Equals(userLogins.Password))
         .FirstOrDefaultAsync();
@@ -93,16 +94,21 @@ app.MapPost("/login", async (UserLogins userLogins, UserDbContext context, JwtSe
         }, jwtSettings);
 
 
-    } else
+    }
+    else
     {
-        Results.BadRequest("wrong password");
+        return Results.BadRequest("wrong password");
     }
     return Results.Ok(Token);
-});
+})
+.WithName("GetToken")
+.Produces<UserTokens>(StatusCodes.Status200OK)
+.Produces(StatusCodes.Status400BadRequest);
 
 app.MapGet("/users", [Authorize] async (UserDbContext context) =>
-await context.Users.ToListAsync())
-.WithName("GetAllUsers").RequireAuthorization();
+//await context.Users.ToListAsync())
+await context.Users.Select(x => new UsersDTO(x)).ToListAsync())
+.WithName("GetAllUsers");
 
 app.MapGet("/users/{id}", async (int id, UserDbContext context) =>
 await context.Users.FindAsync(id)
@@ -116,11 +122,26 @@ await context.Users.FindAsync(id)
 app.MapPost("/users", async (Users user, UserDbContext context) =>
 {
     user.Id = Guid.NewGuid();
+
+    UsersValidator validator = new UsersValidator();
+    ValidationResult result = validator.Validate(user);
+
+    if (!result.IsValid)
+    {
+        string allMessages = result.ToString("~");
+
+        var dictionary = result.Errors.DistinctBy(k => k.PropertyName)
+                                        .ToDictionary(v => v.PropertyName, v => allMessages.Split("~"));
+        return Results.ValidationProblem(dictionary, allMessages);
+
+    } 
+
     context.Users.Add(user);
 
     await context.SaveChangesAsync();
 
     return Results.Created($"/users/{user.Id}", user);
+
 })
 .WithName("PostUser")
 .ProducesValidationProblem()
