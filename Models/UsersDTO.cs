@@ -12,12 +12,17 @@
             get;
             set;
         }
-        public string EmailId
+        public string Nombre
         {
             get;
             set;
         }
-        public string Password
+        public string Apellido
+        {
+            get;
+            set;
+        }
+        public string[] Roles
         {
             get;
             set;
@@ -25,6 +30,6 @@
 
         public UsersDTO() { }
         public UsersDTO(Users user) =>
-            (UserName, EmailId) = (user.UserName, user.EmailId);
+            (UserName, Nombre, Apellido, Roles) = (user.UserName, user.Nombre, Apellido, Roles);
     }
 }

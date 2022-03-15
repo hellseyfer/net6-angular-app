@@ -12,7 +12,20 @@ namespace net6_angular_app.Db
         protected UserDbContext()
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            //Write Fluent API configurations here
+
+            //Property Configurations https://www.entityframeworktutorial.net/efcore/fluent-api-in-entity-framework-core.aspx
+            modelBuilder.Entity<UserRoles>()
+                .HasKey(ur => new { ur.Id, ur.Rol });
+            modelBuilder.Entity<Users>()
+                .HasMany(ur => ur.Roles);
+        }
+
         public DbSet<Users> Users { get; set; }
         public DbSet<UserLogins> UserLogins { get; set; }
+        public DbSet<UserRoles> UserRoles { get; set; }
     }
 }

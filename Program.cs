@@ -82,12 +82,19 @@ app.MapPost("/login", async (UserLogins userLogins, UserDbContext context, JwtSe
     if (valid?.UserName != null)
     {
         var user = await context.Users
-        .Where(u => u.UserName.Equals(userLogins.UserName) && u.Password.Equals(userLogins.Password))
-        .FirstOrDefaultAsync();
+            .Where(u => u.UserName.Equals(userLogins.UserName) && u.Password.Equals(userLogins.Password))
+            .FirstOrDefaultAsync();
+
+        var roles = await context.UserRoles
+            .Where(r => r.Id == user.Id)
+            .ToListAsync();
 
         Token = JwtHelpers.GenTokenkey(new UserTokens()
         {
-            EmailId = user.EmailId,
+            Nombre = user.Nombre,
+            Apellido = user.Apellido,
+            //Roles = roles,
+            Roles = roles,
             GuidId = Guid.NewGuid(),
             UserName = user.UserName,
             Id = user.Id,
@@ -105,9 +112,9 @@ app.MapPost("/login", async (UserLogins userLogins, UserDbContext context, JwtSe
 .Produces<UserTokens>(StatusCodes.Status200OK)
 .Produces(StatusCodes.Status400BadRequest);
 
-app.MapGet("/users", [Authorize] async (UserDbContext context) =>
-//await context.Users.ToListAsync())
-await context.Users.Select(x => new UsersDTO(x)).ToListAsync())
+app.MapGet("/users", [Authorize] async (UserDbContext context) => 
+    await context.Users.Select(x => new UsersDTO(x)).ToListAsync()
+)
 .WithName("GetAllUsers");
 
 app.MapGet("/users/{id}", async (int id, UserDbContext context) =>
@@ -132,11 +139,18 @@ app.MapPost("/users", async (Users user, UserDbContext context) =>
 
         var dictionary = result.Errors.DistinctBy(k => k.PropertyName)
                                         .ToDictionary(v => v.PropertyName, v => allMessages.Split("~"));
+
         return Results.ValidationProblem(dictionary, allMessages);
 
-    } 
+    }
 
     context.Users.Add(user);
+
+    var new_rol = new UserRoles();
+    new_rol.Id = user.Id;
+    new_rol.Rol = "Admin";
+
+    context.UserRoles.Add(new_rol);
 
     await context.SaveChangesAsync();
 
