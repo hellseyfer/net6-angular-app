@@ -1,7 +1,9 @@
-﻿namespace net6_angular_app.Models
+﻿
+namespace net6_angular_app.Models
 {
     public class Users
     {
+        public Users() { }
         public string UserName
         {
             get;
@@ -12,17 +14,17 @@
             get;
             set;
         }
-        public string Nombre
+        public string Name
         {
             get;
             set;
         }
-        public string Apellido
+        public string Surname
         {
             get;
             set;
         }
-        public int Edad
+        public int Age
         {
             get;
             set;
@@ -32,11 +34,18 @@
             get;
             set;
         }
-        public ICollection<UserRoles> Roles
+        //public ICollection<UserRoles> Roles
+        //{
+        //    get;
+        //    set;
+        //}
+
+        public string Rol
         {
             get;
             set;
         }
-        public string? Secret { get; set; } // we hide this with DTO
+
+
     }
 }

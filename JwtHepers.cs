@@ -14,9 +14,10 @@ namespace net6_angular_app
                 new Claim("Id", userAccounts.Id.ToString()),
                     new Claim(ClaimTypes.Name, userAccounts.UserName),
                     new Claim(ClaimTypes.NameIdentifier, Id.ToString()),
+                    new Claim(ClaimTypes.Role, userAccounts.Rol.ToString()),
                     new Claim(ClaimTypes.Expiration, DateTime.UtcNow.AddDays(1).ToString("MMM ddd dd yyyy HH:mm:ss tt"))
             };
-            if(userAccounts.Roles?.Count > 0) foreach (var role in userAccounts.Roles) claims.Add(new Claim(ClaimTypes.Role, role.Rol));
+            //if(userAccounts.Roles?.Count > 0) foreach (var role in userAccounts.Roles) claims.Add(new Claim(ClaimTypes.Role, role.Rol));
 
             return claims;
         }
@@ -42,10 +43,10 @@ namespace net6_angular_app
                 UserToken.UserName = model.UserName;
                 UserToken.Id = model.Id;
                 UserToken.GuidId = Id;
-                UserToken.Roles = model.Roles;
-                UserToken.Nombre = model.Nombre;
-                UserToken.Apellido = model.Apellido;
-                UserToken.Edad = model.Edad;
+                UserToken.Rol = model.Rol;
+                UserToken.Name = model.Name;
+                UserToken.Surname = model.Surname;
+                UserToken.Age = model.Age;
                 return UserToken;
             }
             catch (Exception)

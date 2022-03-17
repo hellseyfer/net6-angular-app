@@ -18,10 +18,12 @@ namespace net6_angular_app.Db
             //Write Fluent API configurations here
 
             //Property Configurations https://www.entityframeworktutorial.net/efcore/fluent-api-in-entity-framework-core.aspx
-            modelBuilder.Entity<UserRoles>()
-                .HasKey(ur => new { ur.Id, ur.Rol });
-            modelBuilder.Entity<Users>()
-                .HasMany(ur => ur.Roles);
+            modelBuilder.Entity<UserRoles>();
+                //.HasKey(ur => new { ur.Id, ur.UserID });
+
+            modelBuilder.Entity<UsersDTO>();
+            modelBuilder.Entity<Users>();
+                
         }
 
         public DbSet<Users> Users { get; set; }

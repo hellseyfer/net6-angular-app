@@ -1,0 +1,130 @@
+<form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+  <div class="example-container">
+    <mat-form-field>
+      <input
+        matInput
+        placeholder="Username"
+        type="text"
+        formControlName="username"
+        minlength="4"
+        required
+      />
+      <mat-error
+        *ngIf="
+          (myFormControl.username.touched || submitted) &&
+          myFormControl.username.hasError('required')
+        "
+      >
+        Username is required.
+      </mat-error>
+      <mat-error
+        *ngIf="
+          (myFormControl.username.touched || submitted) &&
+          myFormControl.username.hasError('invalidPattern')
+        "
+      >
+        Username must containt at least one number and a mayus.
+      </mat-error>
+      <mat-error
+        *ngIf="
+          (myFormControl.username.touched || submitted) &&
+          myFormControl.username.hasError('minlength')
+        "
+      >
+        Username must containt at least 4 words.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input
+        matInput
+        placeholder="Enter your Password"
+        type="password"
+        formControlName="password"
+        minlength="6"
+        required
+      />
+      <mat-error
+        *ngIf="
+          (myFormControl.password.touched || submitted) &&
+          myFormControl.password.hasError('required')
+        "
+      >
+        Password is required.
+      </mat-error>
+      <mat-error
+        *ngIf="
+          (myFormControl.password.touched || submitted) &&
+          myFormControl.password.hasError('minlength')
+        "
+      >
+        Password must containt at least 6 words.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input
+        matInput
+        placeholder="Enter your Confirm Password"
+        type="password"
+        formControlName="passwordRepeat"
+      />
+
+      <mat-error
+        *ngIf="
+          (myFormControl.passwordRepeat.touched || submitted) &&
+          myFormControl.passwordRepeat.hasError('required')
+        "
+      >
+        Confirm Password is required.
+      </mat-error>
+
+      <mat-error
+        *ngIf="
+          (myFormControl.passwordRepeat.touched || submitted) &&
+          myFormControl.passwordRepeat.hasError('passwordMismatch')
+        "
+      >
+        Password and Confirm Pasword don't match.
+      </mat-error>
+    </mat-form-field>
+
+    <div class="two-container">
+      <mat-form-field style="width: 50%">
+        <mat-label>First name</mat-label>
+        <input matInput type="text" formControlName="name" />
+      </mat-form-field>
+
+      <mat-form-field style="width: 50%">
+        <mat-label>Surname</mat-label>
+        <input matInput type="text" formControlName="surname" />
+      </mat-form-field>
+    </div>
+
+    <mat-form-field>
+      <mat-label>Select a Role</mat-label>
+      <mat-select
+        formControlName="rol"
+        (selectionChange)="onSelectRol($event.value)"
+      >
+        <mat-option *ngFor="let rol of rolesOptions" [value]="rol.value">
+          {{ rol.viewValue }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-error
+      *ngIf="
+        (myFormControl.rol.touched || submitted) && myFormControl.rol.hasError('required')
+      "
+    >
+      Rol is required.
+    </mat-error>
+
+    <button mat-raised-button color="primary">Register</button>
+  </div>
+</form>
+
+ {{ myForm.value | json }}
+
+valid: {{ myForm.valid }}
+ 

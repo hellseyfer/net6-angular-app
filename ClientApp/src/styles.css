@@ -1,16 +1,57 @@
 /* You can add global styles to this file, and also import other style files */
 
 /* Provide sufficient contrast against white background */
-a {
-  color: #0366d6;
+*{
+  font-family: 'Lato', sans-serif;
 }
-
-code {
-  color: #e01a76;
+a{
+  text-decoration: none;
 }
-
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+body{
+  padding: 0;
+  margin: 0;
+  background-color: #ffffff;
+  
+}
+.mat-tab-header{
+  border-bottom: 0px !important;
+}
+h1, h4{
+  text-align: center;
+  padding: 15px;
+  margin: 0;
+}
+.nav-link{
+  color: white !important;
+}
+.mat-tab-label .mat-tab-label-content{
+  font-size: 25px;
+}
+.align-center{
+  background: #ffffff;
+  width: 50%;
+  margin: 40px auto;
+  padding: 20px;
+  height: 100%;
+}
+.mat-tab-body-content{
+  overflow: hidden !important;
+}
+.mat-tab-labels{
+  justify-content: center; /* align items in Main Axis */
+}
+.mat-raised-button{
+  padding: 5px !important;
+  font-size: 22px;
+}
+@media(max-width:700px){
+  .align-center{
+      width: 60%;
+  }
+}
+@media(max-width:575px){
+  .align-center{
+      width: 80%;
+  }
+  
 }

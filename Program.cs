@@ -9,10 +9,16 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using FluentValidation.Results;
 using net6_angular_app.Validations;
+using AutoMapper;
+
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
 
 /* Add services to the container. */
+//builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.AddAutoMapper(typeof(UsersMapper));
+//builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // inMemory DB
 builder.Services.AddDbContext<UserDbContext>(options => options.UseInMemoryDatabase("Users"));
@@ -48,6 +54,22 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      builder =>
+                      {
+                          //builder.WithOrigins("http://localhost:4200",
+                          //                    "https://localhost:44424");
+                          builder.AllowAnyOrigin();
+                          builder.AllowAnyHeader();
+                          builder.AllowAnyMethod();
+                      });
+});
+
+
 
 var app = builder.Build();
 
@@ -65,13 +87,16 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 
 // Minimal API - users
 
-app.MapPost("/login", async (UserLogins userLogins, UserDbContext context, JwtSettings jwtSettings) =>
+app.MapPost("/api/login", async (UserLogins userLogins, UserDbContext context, JwtSettings jwtSettings) =>
 {
     var Token = new UserTokens();
 
@@ -85,16 +110,11 @@ app.MapPost("/login", async (UserLogins userLogins, UserDbContext context, JwtSe
             .Where(u => u.UserName.Equals(userLogins.UserName) && u.Password.Equals(userLogins.Password))
             .FirstOrDefaultAsync();
 
-        var roles = await context.UserRoles
-            .Where(r => r.Id == user.Id)
-            .ToListAsync();
-
         Token = JwtHelpers.GenTokenkey(new UserTokens()
         {
-            Nombre = user.Nombre,
-            Apellido = user.Apellido,
-            //Roles = roles,
-            Roles = roles,
+            Name = user.Name,
+            Surname = user.Surname,
+            Rol = user.Rol,
             GuidId = Guid.NewGuid(),
             UserName = user.UserName,
             Id = user.Id,
@@ -112,7 +132,7 @@ app.MapPost("/login", async (UserLogins userLogins, UserDbContext context, JwtSe
 .Produces<UserTokens>(StatusCodes.Status200OK)
 .Produces(StatusCodes.Status400BadRequest);
 
-app.MapGet("/users", [Authorize] async (UserDbContext context) => 
+app.MapGet("/users", [Authorize] async (UserDbContext context) =>
     await context.Users.Select(x => new UsersDTO(x)).ToListAsync()
 )
 .WithName("GetAllUsers");
@@ -126,8 +146,9 @@ await context.Users.FindAsync(id)
 .Produces<UserTokens>(StatusCodes.Status200OK)
 .Produces(StatusCodes.Status404NotFound);
 
-app.MapPost("/users", async (Users user, UserDbContext context) =>
+app.MapPost("/api/users", async (Users user, UserDbContext context, IMapper mapper) =>
 {
+
     user.Id = Guid.NewGuid();
 
     UsersValidator validator = new UsersValidator();
@@ -144,13 +165,11 @@ app.MapPost("/users", async (Users user, UserDbContext context) =>
 
     }
 
+    // utilise the mapping :). UserDTO -> Users
+    //Users _mappedUser = mapper.Map<Users>(user);
+
+    //context.Users.Add(_mappedUser);
     context.Users.Add(user);
-
-    var new_rol = new UserRoles();
-    new_rol.Id = user.Id;
-    new_rol.Rol = "Admin";
-
-    context.UserRoles.Add(new_rol);
 
     await context.SaveChangesAsync();
 

@@ -1,0 +1,27 @@
+<form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+  <div class="example-container">
+    <mat-form-field>
+      <input
+        matInput
+        placeholder="Username"
+        type="text"
+        formControlName="username"
+        minlength="4"
+        required
+      />
+    </mat-form-field>
+
+    <mat-form-field>
+      <input
+        matInput
+        placeholder="Enter your Password"
+        type="password"
+        formControlName="password"
+        minlength="6"
+        required
+      />
+      <button mat-icon-button matSuffix></button>
+    </mat-form-field>
+    <button mat-raised-button color="primary">Login</button>
+  </div>
+</form>

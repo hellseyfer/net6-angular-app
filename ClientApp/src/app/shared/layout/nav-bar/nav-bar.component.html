@@ -1,0 +1,26 @@
+<mat-toolbar color="primary">
+  
+<!--     <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+      <mat-icon>menu</mat-icon>
+    </button> -->
+    <a [routerLink] = "['/home']" class="nav-link">
+        <span>My app</span>
+     </a>
+
+    <span class="example-spacer"></span>
+
+    <div class="nav-items">
+        <a [routerLink] = "['/panel-user']" class="nav-link">
+            User Dashboard
+        </a>
+
+        <a [routerLink] = "['/panel-admin']" class="nav-link">
+            Admin Dashboard
+        </a>
+
+        <a [routerLink] = "['/auth']" class="nav-link">
+            Login/Register
+        </a>
+    </div>
+  
+  </mat-toolbar>

@@ -8,15 +8,15 @@
             get;
             set;
         }
-        public ICollection<UserRoles> Roles { get; set; }
+        public string Rol { get; set; }
         public string UserName
         {
             get;
             set;
         }
-        public string Nombre { get; set; }
-        public string Apellido { get; set; }
-        public int Edad { get; set; }
+        public string Name { get; set; }
+        public string Surname { get; set; }
+        public int Age { get; set; }
 
         // Token info
         public string Token
