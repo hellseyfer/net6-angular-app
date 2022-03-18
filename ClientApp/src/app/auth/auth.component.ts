@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { NgxPermissionsService, NgxRolesService } from 'ngx-permissions';
 import { AuthService } from './services/auth.service';
+import { JWTTokenService } from './services/jwttoken-service.service';
 
 @Component({
   selector: 'app-auth',
@@ -12,7 +14,8 @@ export class AuthComponent implements OnInit {
 
   constructor(private _auth: AuthService,
     private _snackBar: MatSnackBar,
-    private _router: Router) { }
+    private _router: Router,
+  ) { }
 
   ngOnInit(): void {
   }
@@ -28,10 +31,13 @@ export class AuthComponent implements OnInit {
     this._auth.login(l).subscribe(res => {
       console.log(res);
       if(res?.token){
-        sessionStorage.setItem('auth', res);
+        this._auth.setIsLoggedIn(true, res.token);
         this._snackBar.open('Login Success', 'Done');
+        
         this._router.navigate(['/home']);
       }
+    }, () => {
+      this._snackBar.open('Wrong Password or Username', 'Done');
     });
   }
 

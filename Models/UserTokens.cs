@@ -40,7 +40,7 @@
             get;
             set;
         }
-        public DateTime ExpireTime
+        public double ExpireTime
         {
             get;
             set;

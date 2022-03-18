@@ -10,17 +10,30 @@
     <span class="example-spacer"></span>
 
     <div class="nav-items">
+        <ng-template [ngxPermissionsOnly]="'user'" >
         <a [routerLink] = "['/panel-user']" class="nav-link">
             User Dashboard
         </a>
+       </ng-template> 
 
-        <a [routerLink] = "['/panel-admin']" class="nav-link">
-            Admin Dashboard
-        </a>
+       <ng-template [ngxPermissionsOnly]="'admin'"  > 
+            <a  [routerLink] = "['/panel-admin']" class="nav-link">
+                Admin Dashboard
+            </a>
+        </ng-template> 
+   
 
-        <a [routerLink] = "['/auth']" class="nav-link">
-            Login/Register
-        </a>
+        <ng-container *ngIf="!isLoggedIn; else notLoggedIn">
+            <a [routerLink] = "['/auth']" class="nav-link">
+                Login/Register
+            </a>
+        </ng-container>
+        <ng-template #notLoggedIn>
+            <a class="nav-link" (click)="onLogout()">
+                Logout
+            </a>
+        </ng-template>
+        
     </div>
   
   </mat-toolbar>

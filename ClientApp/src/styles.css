@@ -23,6 +23,7 @@ h1, h4{
 }
 .nav-link{
   color: white !important;
+  cursor: pointer;
 }
 .mat-tab-label .mat-tab-label-content{
   font-size: 25px;

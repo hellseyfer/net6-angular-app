@@ -1,5 +1,5 @@
 <body>
-  <app-nav-bar></app-nav-bar>
+  <app-nav-bar [isLoggedIn]="isLoggedIn" (logout)="onLogout()"></app-nav-bar>
   <div class="container">
     <router-outlet></router-outlet>
   </div>

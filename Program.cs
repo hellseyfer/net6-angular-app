@@ -104,27 +104,27 @@ app.MapPost("/api/login", async (UserLogins userLogins, UserDbContext context, J
     .Where(u => u.UserName.Equals(userLogins.UserName) && u.Password.Equals(userLogins.Password))
     .FirstOrDefaultAsync();
 
-    if (valid?.UserName != null)
+if (valid?.UserName != null)
+{
+    var user = await context.Users
+        .Where(u => u.UserName.Equals(userLogins.UserName) && u.Password.Equals(userLogins.Password))
+        .FirstOrDefaultAsync();
+
+    Token = JwtHelpers.GenTokenkey(new UserTokens()
     {
-        var user = await context.Users
-            .Where(u => u.UserName.Equals(userLogins.UserName) && u.Password.Equals(userLogins.Password))
-            .FirstOrDefaultAsync();
-
-        Token = JwtHelpers.GenTokenkey(new UserTokens()
-        {
-            Name = user.Name,
-            Surname = user.Surname,
-            Rol = user.Rol,
-            GuidId = Guid.NewGuid(),
-            UserName = user.UserName,
-            Id = user.Id,
-        }, jwtSettings);
+        Name = user.Name,
+        Surname = user.Surname,
+        Rol = user.Rol,
+        GuidId = Guid.NewGuid(),
+        UserName = user.UserName,
+        Id = user.Id,
+    }, jwtSettings);
 
 
-    }
-    else
-    {
-        return Results.BadRequest("wrong password");
+}
+else
+{
+    return Results.BadRequest(error: "wrong password");
     }
     return Results.Ok(Token);
 })

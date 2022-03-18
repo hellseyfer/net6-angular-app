@@ -13,6 +13,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { NgxPermissionsModule } from 'ngx-permissions';
 
 const material = [
   MatToolbarModule,
@@ -33,6 +34,7 @@ const material = [
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
+    NgxPermissionsModule.forChild()
   ],
   exports: [NavBarComponent, material, FormsModule, ReactiveFormsModule],
 })
@@ -40,8 +42,7 @@ export class SharedModule {
     static forRoot(): ModuleWithProviders<SharedModule> { // This ensures that services will be singletons.
       return {
         ngModule: SharedModule,
-        providers: [
-        ]
+        providers: []
       };
     }
 }

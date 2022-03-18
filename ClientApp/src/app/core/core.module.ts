@@ -3,10 +3,11 @@
 
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { AuthService } from '../auth/services/auth.service';
+import { JWTTokenService } from '../auth/services/jwttoken-service.service';
 
 @NgModule({
   imports: [],
-  providers:[AuthService]
+  providers:[AuthService, JWTTokenService]
 })
 
 export class CoreModule {
