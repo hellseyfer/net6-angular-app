@@ -45,6 +45,13 @@ const routes: Routes = [
       },
     },
   },
+  {
+    path: 'lazy-table',
+    loadChildren: () => 
+      import('./features/filter-table/filter-table.module').then(
+        (m) => m.FilterTableModule
+      )
+  },
   /*   { path: 'not-found', component: PageNotFoundComponent }, */
    { path: '**', redirectTo: 'home' }, 
 ];

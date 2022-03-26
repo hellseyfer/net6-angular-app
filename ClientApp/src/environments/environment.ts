@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   baseURL: 'https://localhost:7057/api',
+  rows: 3,
 };
 
 /*

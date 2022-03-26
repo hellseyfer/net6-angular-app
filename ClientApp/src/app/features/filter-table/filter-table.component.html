@@ -1,0 +1,6 @@
+<app-table-users
+  [users]="users"
+  [loading]="loading"
+  (event)="onLazyLoad($event)"
+  (export)="onExport()"
+></app-table-users>
