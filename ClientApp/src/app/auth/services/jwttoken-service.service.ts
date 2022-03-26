@@ -6,7 +6,8 @@ import { AuthService } from './auth.service';
 export class JWTTokenService {
 
     //jwtToken: string;
-    decodedToken: { [key: string]: string };
+    private str_role = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role';
+    private decodedToken: { [key: string]: string };
 
     constructor() {
     }
@@ -49,8 +50,7 @@ export class JWTTokenService {
 
     getRole() {
       this.decodeToken();
-      const str_role = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role';
-      const r = this.decodedToken ? this.decodedToken[str_role] : null;
+      const r = this.decodedToken ? this.decodedToken[this.str_role] : null;
       return r
     } 
 

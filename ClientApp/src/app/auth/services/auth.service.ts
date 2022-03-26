@@ -2,13 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxRolesService } from 'ngx-permissions';
-import { observable, Observable, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { JWTTokenService } from './jwttoken-service.service';
 
 @Injectable()
 export class AuthService {
 
-  baseUrl = 'https://localhost:7057/api';
+  baseUrl = environment.baseURL;
   $loggedIn: Subject<boolean> = new Subject<boolean>();
 
   constructor(private _http: HttpClient,
@@ -29,6 +30,7 @@ export class AuthService {
     this._jwts.destroyToken();
     this.$loggedIn.next(false);
     this._rs.flushRoles();
+    this.setRole('guest');
     this._router.navigate(['/home'])
   }
 
@@ -42,13 +44,17 @@ export class AuthService {
 
   setIsLoggedIn(val: boolean, token?:string){
     if(token && val){
-      
       this._jwts.setToken(token);
       const role = this._jwts.getRole();
-      let perm = [''];
-      this._rs.addRole(role, perm);
+      this.setRole(role);
       
     }
     this.$loggedIn.next(val);
+    this.setRole('guest');
+  }
+
+  setRole(role){
+      let perm = [''];
+      this._rs.addRole(role, perm);
   }
 }

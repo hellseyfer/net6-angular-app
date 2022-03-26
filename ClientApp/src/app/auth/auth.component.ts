@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { NgxPermissionsService, NgxRolesService } from 'ngx-permissions';
 import { AuthService } from './services/auth.service';
-import { JWTTokenService } from './services/jwttoken-service.service';
 
 @Component({
   selector: 'app-auth',
@@ -23,7 +21,10 @@ export class AuthComponent implements OnInit {
   onRegister(r){
     this._auth.register(r).subscribe(res => {
       console.log(res);
-      this._snackBar.open('Register Success', 'Done');
+      this._snackBar.open('Registering Success', 'Done');
+    },(cb) => {
+      this._snackBar.open(cb.error.detail, 'Done');
+
     })
   }
 

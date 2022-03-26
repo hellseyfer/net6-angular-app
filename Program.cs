@@ -132,12 +132,12 @@ else
 .Produces<UserTokens>(StatusCodes.Status200OK)
 .Produces(StatusCodes.Status400BadRequest);
 
-app.MapGet("/users", [Authorize] async (UserDbContext context) =>
+app.MapGet("/api/users", [Authorize] async (UserDbContext context) =>
     await context.Users.Select(x => new UsersDTO(x)).ToListAsync()
 )
 .WithName("GetAllUsers");
 
-app.MapGet("/users/{id}", async (int id, UserDbContext context) =>
+app.MapGet("/api/users/{id}", async (int id, UserDbContext context) =>
 await context.Users.FindAsync(id)
     is Users user
         ? Results.Ok(user)
@@ -148,10 +148,9 @@ await context.Users.FindAsync(id)
 
 app.MapPost("/api/users", async (Users user, UserDbContext context, IMapper mapper) =>
 {
-
     user.Id = Guid.NewGuid();
 
-    UsersValidator validator = new UsersValidator();
+    UsersValidator validator = new UsersValidator(context);
     ValidationResult result = validator.Validate(user);
 
     if (!result.IsValid)
@@ -174,11 +173,11 @@ app.MapPost("/api/users", async (Users user, UserDbContext context, IMapper mapp
     await context.SaveChangesAsync();
 
     return Results.Created($"/users/{user.Id}", user);
-
 })
 .WithName("PostUser")
 .ProducesValidationProblem()
-.Produces<UserTokens>(StatusCodes.Status201Created);
+.Produces<UserTokens>(StatusCodes.Status201Created)
+.Produces(StatusCodes.Status400BadRequest);
 
 
 

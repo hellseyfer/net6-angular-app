@@ -9,6 +9,13 @@ const routes: Routes = [
   {
     path: 'auth',
     loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule),
+    canActivate: [NgxPermissionsGuard],
+    data: {
+      permissions: {
+        only: 'guest',
+        //except: ['admin', 'user'],
+      },
+    }, 
   },
   {
     path: 'panel-admin',
@@ -19,8 +26,8 @@ const routes: Routes = [
     canActivate: [NgxPermissionsGuard],
     data: {
       permissions: {
-        only: ['admin'],
-        except: ['guest'],
+        only: 'admin',
+        //except: ['guest', 'user'],
       },
     }, 
   },
@@ -33,8 +40,8 @@ const routes: Routes = [
     canActivate: [NgxPermissionsGuard],
     data: {
       permissions: {
-        only: ['user'],
-        except: ['guest'],
+        only: 'user',
+        //except: ['guest', 'admin'],
       },
     },
   },
