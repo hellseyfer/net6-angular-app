@@ -38,7 +38,7 @@ export class AuthService {
     return this.$loggedIn.asObservable();
   }
 
-  getIsLoggedIn(){
+  getIsLoggedIn(): boolean{
     return !this._jwts.isTokenExpired();
   }
 
@@ -47,10 +47,10 @@ export class AuthService {
       this._jwts.setToken(token);
       const role = this._jwts.getRole();
       this.setRole(role);
-      
+    } else{
+      this.$loggedIn.next(val);
+      this.setRole('guest');
     }
-    this.$loggedIn.next(val);
-    this.setRole('guest');
   }
 
   setRole(role){
