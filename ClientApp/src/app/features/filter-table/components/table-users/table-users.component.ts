@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { LazyLoadEvent } from 'primeng/api/lazyloadevent';
 import { User } from '../../models';
 
@@ -7,23 +7,26 @@ import { User } from '../../models';
   templateUrl: './table-users.component.html',
   styleUrls: ['./table-users.component.css'],
 })
-export class TableUsersComponent implements OnInit {
+export class TableUsersComponent{
   @Input() users: User[];
-  @Output() event = new EventEmitter<LazyLoadEvent>();
+  @Output() tableEvent = new EventEmitter<LazyLoadEvent>();
   @Input() loading: boolean;
   @Output() export = new EventEmitter<boolean>();
+  @Output() update = new EventEmitter<boolean>();
 
-  constructor() {}
-
-  ngOnInit() {}
 
   loadUsers(e) {
     console.log(e);
-    this.event.emit(e);
+    this.tableEvent.emit(e);
   }
 
   exportExcel(){
     this.export.emit();
   }
+
+  onUpdate(){
+    this.update.emit();
+  }
+ 
 
 }

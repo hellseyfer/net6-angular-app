@@ -5,9 +5,7 @@ import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { User } from '../models';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class UsersService {
   endpoint = 'https://jsonplaceholder.typicode.com/users';
   

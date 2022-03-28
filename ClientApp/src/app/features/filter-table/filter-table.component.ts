@@ -1,8 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { LazyLoadEvent } from 'primeng/api/lazyloadevent';
 import { Company, User } from './models';
 import { UsersService } from './services/users.service';
 import * as FileSaver from 'file-saver';
+import { StorageService } from 'src/app/shared/services/storage.service';
+import { Observable, ReplaySubject } from 'rxjs';
+import {
+  filter,
+  map,
+  pluck,
+  startWith,
+  take,
+  takeUntil,
+  tap,
+} from 'rxjs/operators';
+import { AppStateService } from 'src/app/shared/services/app-state.service';
 
 @Component({
   selector: 'app-filter-table',
@@ -13,10 +25,44 @@ export class FilterTableComponent implements OnInit {
   users: User[];
   loading: boolean;
   eventoTabla: LazyLoadEvent;
+  users$: Observable<User[]>;
+  private destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
+  init: boolean;
 
-  constructor(private _us: UsersService) {}
+  constructor(
+    private _us: UsersService,
+    private _cd: ChangeDetectorRef,
+    //private _storage: StorageService,
+    private _appState: AppStateService
+  ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this._appState.stateApp$.subscribe((res) => {
+      this.users = res?.users;
+    });
+  }
+
+  ngAfterViewInit() {
+    this._cd.detectChanges(); //para salvar error NG0100
+  }
+
+  ngOnDestroy() {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
+    console.log('destroyed');
+  }
+
+  onLazyLoad(e: LazyLoadEvent) {
+    this.eventoTabla = e;
+    const sortField = e.sortField ?? 'name';
+    this.buildRequestUsers(e.first, sortField, e.sortOrder, e.filters);
+
+    this._appState.setStorageItem({
+      key: 'eventoTabla',
+      value: e,
+      storageArea: 'localStorage',
+    });
+  }
 
   buildRequestUsers(
     skip: number,
@@ -26,19 +72,25 @@ export class FilterTableComponent implements OnInit {
   ) {
     //this.request.skip = skip;
     this.loading = true;
-    this._us.getUsers(skip, sortField, sortOrder, filters).subscribe((res) => {
-      console.log(res);
-      this.users = res;
-      this.loading = false;
+    this._us
+      .getUsers(skip, sortField, sortOrder, filters)
+      .pipe(take(1))
+      .subscribe((res) => {
+        this.users = res;
+        this.loading = false;
+        this.updateStorage();
+      });
+  }
+
+  updateStorage() {
+    this._appState.setStorageItem({
+      key: 'users',
+      value: this.users,
+      storageArea: 'localStorage',
     });
   }
 
-  onLazyLoad(e: LazyLoadEvent) {
-    this.eventoTabla = e;
-    const sortField = e.sortField ?? 'name';
-    this.buildRequestUsers(e.first, sortField, e.sortOrder, e.filters);
-  }
-
+  //#region Excel  docs: https://documentation.page/github/sheetjs/sheetjs#workbook-object
   onExport() {
     import('xlsx').then((xlsx) => {
       // saco los id de los users con 'destructuring synax'
@@ -48,9 +100,9 @@ export class FilterTableComponent implements OnInit {
       });
 
       // aplano el objeto
-      const rows = obj.map(row => ({
-        ... row,
-        company: row.company.name
+      const rows = obj.map((row) => ({
+        ...row,
+        company: row.company.name,
       }));
 
       // creo hoja del excel
@@ -73,21 +125,21 @@ export class FilterTableComponent implements OnInit {
         { wch: 20 },
         { wch: 14 },
         { wch: 10 },
-        { wch: 15 }
+        { wch: 15 },
       ];
 
       // creo conjunto de hojas (workbook)
       const workbook = { Sheets: { users: worksheet }, SheetNames: ['users'] };
 
       //creo hojas para las compañias y las añado al workbook
-      const rows_company: Company[] = obj.map(row => row.company);
+      const rows_company: Company[] = obj.map((row) => row.company);
 
-      rows_company.forEach(row => {
+      rows_company.forEach((row) => {
         let arr = [];
         arr.push(row);
         const worksheet = xlsx.utils.json_to_sheet(arr);
         xlsx.utils.book_append_sheet(workbook, worksheet, row.name);
-      })
+      });
 
       const excelBuffer: any = xlsx.write(workbook, {
         bookType: 'xlsx',
@@ -109,4 +161,5 @@ export class FilterTableComponent implements OnInit {
       fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION
     );
   }
+  //#endregion Excel
 }

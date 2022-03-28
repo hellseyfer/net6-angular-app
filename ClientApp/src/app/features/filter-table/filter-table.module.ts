@@ -6,7 +6,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { TableModule } from 'primeng/table';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { TooltipModule } from 'primeng/tooltip';
+import {InputTextModule} from 'primeng/inputtext';
+import { UsersService } from './services/users.service';
+import { FormsModule } from '@angular/forms';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 const routes = [
   {
@@ -21,9 +24,12 @@ const routes = [
     HttpClientModule,
     TableModule,
     ButtonModule,
+    InputTextModule,
+    SharedModule,
     RouterModule.forChild(routes),
   ],
   declarations: [FilterTableComponent, TableUsersComponent],
   exports: [FilterTableComponent],
+  providers: [UsersService]
 })
 export class FilterTableModule {}

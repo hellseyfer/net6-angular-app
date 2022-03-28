@@ -32,7 +32,6 @@ const material = [
     CommonModule,
     material,
     RouterModule,
-    FormsModule,
     ReactiveFormsModule,
     NgxPermissionsModule.forChild()
   ],

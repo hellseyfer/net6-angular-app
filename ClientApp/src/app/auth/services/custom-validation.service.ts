@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, FormGroup, ValidatorFn } from '@angular/forms';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class CustomValidationService {
 
   patternValidator(p:string): ValidatorFn {

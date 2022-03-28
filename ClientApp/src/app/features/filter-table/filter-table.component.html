@@ -1,6 +1,7 @@
 <app-table-users
   [users]="users"
   [loading]="loading"
-  (event)="onLazyLoad($event)"
+  (tableEvent)="onLazyLoad($event)"
   (export)="onExport()"
+  (update)="updateStorage()"
 ></app-table-users>
