@@ -3,18 +3,11 @@ import { LazyLoadEvent } from 'primeng/api/lazyloadevent';
 import { Company, User } from './models';
 import { UsersService } from './services/users.service';
 import * as FileSaver from 'file-saver';
-import { StorageService } from 'src/app/shared/services/storage.service';
 import { Observable, ReplaySubject } from 'rxjs';
 import {
-  filter,
-  map,
-  pluck,
-  startWith,
-  take,
-  takeUntil,
-  tap,
+  take
 } from 'rxjs/operators';
-import { AppStateService } from 'src/app/shared/services/app-state.service';
+import { AppState, AppStateService } from 'src/app/core/services/app-state.service';
 
 @Component({
   selector: 'app-filter-table',
@@ -27,18 +20,21 @@ export class FilterTableComponent implements OnInit {
   eventoTabla: LazyLoadEvent;
   users$: Observable<User[]>;
   private destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
-  init: boolean;
+  init: boolean = false;
+  appState: AppState;
 
   constructor(
     private _us: UsersService,
     private _cd: ChangeDetectorRef,
     //private _storage: StorageService,
-    private _appState: AppStateService
+    private _as: AppStateService
   ) {}
 
   ngOnInit() {
-    this._appState.stateApp$.subscribe((res) => {
-      this.users = res?.users;
+    this._as.stateApp$.subscribe((res) => {
+      this.appState = res;
+      this.users = this.appState?.users;
+     
     });
   }
 
@@ -53,15 +49,20 @@ export class FilterTableComponent implements OnInit {
   }
 
   onLazyLoad(e: LazyLoadEvent) {
-    this.eventoTabla = e;
-    const sortField = e.sortField ?? 'name';
-    this.buildRequestUsers(e.first, sortField, e.sortOrder, e.filters);
+      const event = this.init ? this.appState['eventoTabla'] : e;
+      this.eventoTabla = event;
+      const sortField = event.sortField ?? 'name';
+      if(this.init){
+        this.buildRequestUsers(event.first, sortField, event.sortOrder, event.filters);
+      }
 
-    this._appState.setStorageItem({
-      key: 'eventoTabla',
-      value: e,
-      storageArea: 'localStorage',
-    });
+      this._as.setStorageItem({
+        key: 'eventoTabla',
+        value: event,
+        storageArea: 'localStorage',
+      });
+      this.init = true;
+   
   }
 
   buildRequestUsers(
@@ -83,7 +84,7 @@ export class FilterTableComponent implements OnInit {
   }
 
   updateStorage() {
-    this._appState.setStorageItem({
+    this._as.setStorageItem({
       key: 'users',
       value: this.users,
       storageArea: 'localStorage',

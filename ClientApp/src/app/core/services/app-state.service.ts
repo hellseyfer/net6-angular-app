@@ -14,23 +14,33 @@ export class AppState {
   }
 }
 
-@Injectable({
-  providedIn: 'root',
-})
-export class AppStateService {
+/*
+* Este servicio lo cree para tener registro del estado general de la aplicacion pero a un bajo costo
+* sin utilizar herramientas redux.
+* De esta manera funciona pero tiene la contra que al subscribirse en stateApp$,
+* dentro, perdes la chance de asignar un nuevo valor a alguno de los observables del combineLatest
+* del constructor de AppStateService (que es el que asigna el estado finalmente) 
+* debido que se puede producir un bucle infinito. todo valor que se asigne dentro del .stateApp$.subscribe()
+* debe ser ajeno a las propiedades de AppState.
+*/
+
+@Injectable()
+export class AppStateService extends StorageService {
   private destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
   public stateApp$: BehaviorSubject<AppState> = new BehaviorSubject<AppState>(
-    null
+    this.getStorageItem({key:"appState", storageArea: 'localStorage'})
   );
 
-  constructor(private _storage: StorageService) {
+  constructor() {
+    super();
+    //asignacion del estado de la app
     combineLatest([
-      this._storage.usersChange$,
-      this._storage.eventoTablaChange$
+      this.usersChange$,
+      this.eventoTablaChange$
     ])
       .pipe(takeUntil(this.destroyed$))
-      .pipe(debounceTime(500))
+      .pipe(debounceTime(300))
       .subscribe(([usrs, evnt]) => {
         const obj = new AppState(usrs, evnt);
         this.stateApp$.next(obj);
@@ -38,8 +48,8 @@ export class AppStateService {
       });
   }
 
-  setStorageItem(change) {
-    this._storage.setStorageItem(change);
+  load() {
+    return this.stateApp$;
   }
 
   ngOnDestroy() {

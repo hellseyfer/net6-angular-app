@@ -1,0 +1,4 @@
+.altura-scroll{
+    overflow-x: auto;
+    max-height: 60vh;
+}
