@@ -108,7 +108,8 @@
     </ng-template>
   </p-table>
 
-  <button
+  <div class="wrapper-rows">
+    <button
     style="float: right"
     type="button"
     pButton
@@ -118,5 +119,12 @@
     class="p-button-success mr-2"
     pTooltip="XLS"
     tooltipPosition="bottom"
+    label="Exportar excel"
   ></button>
+
+  <app-file-upload [format]="'csv'" [endpoint]="endpoint" [label]="'Subir archivo CSV'">
+
+  </app-file-upload>
+  </div>
+
 </div>

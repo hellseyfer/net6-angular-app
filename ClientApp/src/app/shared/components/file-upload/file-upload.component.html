@@ -1,0 +1,2 @@
+<p-fileUpload #myUploader  name="myfile[]" multiple="false" [customUpload]="true" mode="basic" maxFileSize="1000000"
+        accept=".csv" [auto]="true" (uploadHandler)="onBasicUploadAuto($event)" [chooseLabel]="label" [showCancelButton]="true" [cancelLabel]="'cancelar'"> </p-fileUpload>

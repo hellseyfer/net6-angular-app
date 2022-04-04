@@ -56,3 +56,10 @@ h1, h4{
   }
   
 }
+
+.wrapper-rows {
+  display: flex;
+  justify-content: space-evenly;
+  flex-flow: row nowrap;
+  align-items: center;
+}

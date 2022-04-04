@@ -14,6 +14,8 @@ import {MatInputModule} from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { NgxPermissionsModule } from 'ngx-permissions';
+import { FileUploadComponent } from './components/file-upload/file-upload.component';
+import {FileUploadModule} from 'primeng/fileupload';
 
 const material = [
   MatToolbarModule,
@@ -26,16 +28,22 @@ const material = [
   MatSnackBarModule
 ];
 
+const primeng = [
+  FileUploadModule,
+
+]
+
 @NgModule({
-  declarations: [NavBarComponent],
+  declarations: [NavBarComponent, FileUploadComponent],
   imports: [
     CommonModule,
     material,
+    primeng,
     RouterModule,
     ReactiveFormsModule,
     NgxPermissionsModule.forChild()
   ],
-  exports: [NavBarComponent, material, FormsModule, ReactiveFormsModule],
+  exports: [NavBarComponent, material, FormsModule, ReactiveFormsModule, FileUploadComponent],
 })
 export class SharedModule {
     static forRoot(): ModuleWithProviders<SharedModule> { // This ensures that services will be singletons.

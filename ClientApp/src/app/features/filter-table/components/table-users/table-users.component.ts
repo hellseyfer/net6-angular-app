@@ -14,6 +14,7 @@ export class TableUsersComponent{
   @Output() export = new EventEmitter<boolean>();
   @Output() update = new EventEmitter<boolean>();
 
+  public endpoint ="/v1/up-my-file"
 
   loadUsers(e) {
     console.log(e);
